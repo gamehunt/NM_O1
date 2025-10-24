@@ -344,10 +344,13 @@ product_poly = p * q
 
 # Корни полинома p:
 roots = np.roots(coef)
+
+diff = p.deriv()
+integ = p.integ()
 """, height=400)
 
         if st.button("Запустить"):
-            p, values, sum_poly, product_poly, roots = exec_and_return(code, ["p", "values", "sum_poly", "product_poly", "roots"])
+            p, values, sum_poly, product_poly, roots, diff, integ = exec_and_return(code, ["p", "values", "sum_poly", "product_poly", "roots", "diff", "integ"])
 
             st.write("Полином p(x):")
             st.write(p)
@@ -359,6 +362,10 @@ roots = np.roots(coef)
             st.write(product_poly)
             st.write("### Корни полинома p:")
             st.write(roots)
+            st.write("### Производная полинома p:")
+            st.write(diff)
+            st.write("### Интеграл от полинома p:")
+            st.write(integ)
     
     define_function("Работа с полиномами в NumPy",
                    """Работа с полиномами в NumPy осуществляется с помощью модуля :red[numpy.polynomial].\n
