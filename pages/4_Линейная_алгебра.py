@@ -370,4 +370,4 @@ roots = np.roots(coef)
                    """,
                    doc="../routines.polynomials",
                    example=example,
-                   code="numpy.poly1d(c_or_r, r=False, variable=None)\nnumpy.roots(p)")
+                   code="numpy.polynomial.polynomial.Polynomial(coef, domain=None, window=None, symbol='x')\nnumpy.roots(p)")
