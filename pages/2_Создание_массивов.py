@@ -18,7 +18,7 @@ if menu == "Одномерный массив":
     def example():
         code = st.text_area("введите код для создания одномерного массива:",
                             value="array = np.array([1, 2, 3, 4, 5])", height=100)
-        if st.button("создать массив"):
+        if st.button("Создать массив"):
             st.write(exec_and_return(code, 'array'))
 
     define_function("1. Одномерный массив",
@@ -26,7 +26,8 @@ if menu == "Одномерный массив":
                     Она позволяет создавать массивы из списков, кортежей или других последовательностей, 
                     а также задавать тип данных и другие параметры.""",
                     "numpy.array",
-                    example)
+                    example,
+                    code="numpy.array(object, dtype=None, *, copy=True, order='K', subok=False, ndmin=0, like=None)")
 
 if menu == "Двумерный массив":
     def example():
@@ -40,8 +41,8 @@ if menu == "Двумерный массив":
                     """Двумерный массив в NumPy представляет собой массив, состоящий из строк и столбцов, 
                     и может быть создан с помощью функции :red[numpy.array()].""",
                     "numpy.array",
-                    example
-                    )
+                    example,
+                    code="numpy.array(object, dtype=None, *, copy=True, order='K', subok=False, ndmin=0, like=None)")
 
 if menu == "Массив нулей":
     def example():
@@ -55,8 +56,8 @@ if menu == "Массив нулей":
                     """:red[numpy.zeros] — это функция в библиотеке NumPy, которая используется для создания массива,  
                     заполненного нулями.""",
                     "numpy.zeros",
-                    example
-                    )
+                    example,
+                    code="numpy.zeros(shape, dtype=float, order='C', *, like=None)")
 
 if menu == "Массив единиц":
     def example():
@@ -68,8 +69,8 @@ if menu == "Массив единиц":
     define_function("4. Массив единиц",
                     ":red[numpy.ones] — это функция в библиотеке NumPy, аналогичная :red[numpy.zeros]. ",
                     "numpy.ones",
-                    example
-                    )
+                    example,
+                    code="numpy.ones(shape, dtype=None, order='C', *, device=None, like=None)")
 
 if menu == "Массив случайных чисел":
     def example():
@@ -81,8 +82,9 @@ if menu == "Массив случайных чисел":
 
     define_function("5. Массив случайных чисел",
                     ":red[numpy.random.rand] - функция NumPy для создания массива случайных чисел.",
-                    "numpy.random.rand",
-                    example)
+                    "../random/generated/numpy.random.rand",
+                    example,
+                    code="random.rand(d0, d1, ..., dn)")
 
 if menu == "Массив с заданным диапазоном":
     def example():
@@ -94,8 +96,8 @@ if menu == "Массив с заданным диапазоном":
     define_function("6. Массив с заданным диапазоном",
                     ":red[numpy.arange] - функция NumPy для создания массива с заданным распределением.",
                     "numpy.arange",
-                    example
-                    )
+                    example,
+                    code="numpy.arange([start, ]stop, [step, ]dtype=None, *, device=None, like=None)")
 
 if menu == "Массив с равномерным распределением":
     def example():
@@ -108,5 +110,5 @@ if menu == "Массив с равномерным распределением"
                     """:red[numpy.linspace] - функция в библиотеке NumPy, 
                     используется для создания массива равномерно распределенных значений в заданном интервале.""",
                     "numpy.linspace",
-                    example
-                    )
+                    example,
+                    code="numpy.linspace(start, stop, num=50, endpoint=True, retstep=False, dtype=None, axis=0, *, device=None)")

@@ -38,7 +38,8 @@ if menu == "numpy.reshape":
     define_function("numpy.reshape", 
                    "Изменяет форму массива без изменения его данных.",
                    "numpy.reshape",
-                   example)
+                   example,
+                   code="numpy.reshape(a, /, shape=None, order='C', *, newshape=None, copy=None)")
 
 # numpy.flatten
 if menu == "numpy.flatten":
@@ -54,7 +55,8 @@ if menu == "numpy.flatten":
     define_function("numpy.flatten",
                    "Преобразует многомерный массив в одномерный.",
                    "numpy.ndarray.flatten",
-                   example)
+                    example,
+                    code="ndarray.flatten(order='C')")
 
 # numpy.sum
 if menu == "numpy.sum":
@@ -70,7 +72,8 @@ if menu == "numpy.sum":
     define_function("numpy.sum",
                    "Суммирует элементы массива.",
                    "numpy.sum",
-                   example)
+                   example,
+                    code="numpy.sum(a, axis=None, dtype=None, out=None, keepdims=<no value>, initial=<no value>, where=<no value>)")
 
 # numpy.mean
 if menu == "numpy.mean":
@@ -86,7 +89,8 @@ if menu == "numpy.mean":
     define_function("numpy.mean",
                    "Вычисляет среднее значение элементов массива.",
                    "numpy.mean",
-                   example)
+                   example,
+                    code="numpy.mean(a, axis=None, dtype=None, out=None, keepdims=<no value>, *, where=<no value>)")
 
 # numpy.dot
 if menu == "numpy.dot":
@@ -102,7 +106,8 @@ if menu == "numpy.dot":
     define_function("numpy.dot",
                    "Выполняет матричное умножение.",
                    "numpy.dot",
-                   example)
+                   example,
+                    code="numpy.dot(a, b, out=None)")
 
 # numpy.sin
 if menu == "numpy.sin":
@@ -118,7 +123,8 @@ if menu == "numpy.sin":
     define_function("numpy.sin",
                    "Вычисляет синус каждого элемента массива.",
                    "numpy.sin",
-                   example)
+                   example,
+                    code="numpy.sin(x, /, out=None, *, where=True, casting='same_kind', order='K', dtype=None, subok=True[, signature]) = <ufunc 'sin'>")
 
 # numpy.max
 if menu == "numpy.max":
@@ -134,7 +140,8 @@ if menu == "numpy.max":
     define_function("numpy.max",
                    "Находит максимальное значение в массиве.",
                    "numpy.max",
-                   example)
+                   example,
+                    code="numpy.max(a, axis=None, out=None, keepdims=<no value>, initial=<no value>, where=<no value>)")
 
 # numpy.min
 if menu == "numpy.min":
@@ -150,7 +157,8 @@ if menu == "numpy.min":
     define_function("numpy.min",
                    "Находит минимальное значение в массиве.",
                    "numpy.min",
-                   example)
+                   example,
+                    code="numpy.min(a, axis=None, out=None, keepdims=<no value>, initial=<no value>, where=<no value>)")
 
 # numpy.std
 if menu == "numpy.std":
@@ -166,7 +174,8 @@ if menu == "numpy.std":
     define_function("numpy.std",
                    "Вычисляет стандартное отклонение элементов массива.",
                    "numpy.std",
-                   example)
+                   example,
+                    code="numpy.std(a, axis=None, dtype=None, out=None, ddof=0, keepdims=<no value>, *, where=<no value>, mean=<no value>, correction=<no value>)")
 
 # numpy.unique
 if menu == "numpy.unique":
@@ -182,7 +191,8 @@ if menu == "numpy.unique":
     define_function("numpy.unique",
                    "Возвращает уникальные значения из массива.",
                    "numpy.unique",
-                   example)
+                   example,
+                    code="numpy.unique(ar, return_index=False, return_inverse=False, return_counts=False, axis=None, *, equal_nan=True, sorted=True)")
 
 # numpy.concatenate
 if menu == "numpy.concatenate":
@@ -198,7 +208,8 @@ if menu == "numpy.concatenate":
     define_function("numpy.concatenate",
                    "Объединяет два или более массивов вдоль заданной оси.",
                    "numpy.concatenate",
-                   example)
+                   example,
+                    code="numpy.concatenate((a1, a2, ...), axis=0, out=None, dtype=None, casting='same_kind')")
 
 # numpy.where
 if menu == "numpy.where":
@@ -214,4 +225,5 @@ if menu == "numpy.where":
     define_function("numpy.where",
                    "Возвращает индексы, где условие истинно.",
                    "numpy.where",
-                   example)
+                   example,
+                    code="numpy.where(condition, [x, y, ]/)")
