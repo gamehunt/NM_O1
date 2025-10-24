@@ -19,7 +19,7 @@ menu = st.sidebar.radio("***",
                             "numpy.linalg.qr",
                             "numpy.linalg.eigh",
                             "numpy.linalg.lstsq",
-                            "Работа с полиномами",
+                            "numpy.polynomial",
                         )
                         )
 
@@ -321,19 +321,22 @@ if menu == "numpy.linalg.lstsq":
                    )
 
 # Работа с полиномами
-if menu == "Работа с полиномами":
+if menu == "numpy.polynomial":
     def example():
         code = st.text_area("Интерактивный код:",
-                            value="""# Создать полином:
+                            value="""
+from numpy import polynomial
+# Создать полином:
+
 coef = [2, 3, 1]  
-p = np.poly1d(coef)
+p = polynomial.Polynomial(coef)
 
 #Значения полинома p в точках x:
 x = np.array([0, 1, 2])
 values = p(x)
 
 #Сумма двух полиномов:
-q = np.poly1d([1, 4])
+q = polynomial.Polynomial([1, 4])
 sum_poly = p + q
 
 # Произведение полиномов p и q:
@@ -358,7 +361,13 @@ roots = np.roots(coef)
             st.write(roots)
     
     define_function("Работа с полиномами в NumPy",
-                   "Работа с полиномами в NumPy осуществляется с помощью модуля :red[numpy.polynomial]",
-                   doc="numpy.poly",
+                   """Работа с полиномами в NumPy осуществляется с помощью модуля :red[numpy.polynomial].\n
+Помимо обычных многочленов, модуль поддерживает работу со следующими видами полиномов:
+* Многочлены Чебышева (:red[numpy.polynomial.chebyshev])
+* Многочлены Лежандра (:red[numpy.polynomial.legendre])
+* Многочлены Лаггера (:red[numpy.polynomial.laguerre])
+* Многочлены Эрмита (:red[numpy.polynomial.hermite])
+                   """,
+                   doc="../routines.polynomials",
                    example=example,
                    code="numpy.poly1d(c_or_r, r=False, variable=None)\nnumpy.roots(p)")
