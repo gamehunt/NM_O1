@@ -262,7 +262,8 @@ if menu == "numpy.linalg.qr":
                    матрицу A в виде произведения матрицы Q (ортогональной) и матрицы R (верхней треугольной). 
                    Это разложение полезно для решения систем линейных уравнений и вычисления собственных значений.""",
                    doc="numpy.linalg.qr",
-                   example=example)
+                   example=example,
+                   code="numpy.linalg.qr(a, mode='reduced')")
 
 # numpy.linalg.eigh
 if menu == "numpy.linalg.eigh":
@@ -288,7 +289,8 @@ if menu == "numpy.linalg.eigh":
                    матрицы. Это разложение полезно в различных областях, включая физику и статистику, 
                    так как оно позволяет анализировать свойства симметричных систем.""",
                    doc="numpy.linalg.eigh",
-                   example=example)
+                   example=example,
+                   code="numpy.linalg.eigh(a, UPLO='L')")
 
 # numpy.linalg.lstsq
 if menu == "numpy.linalg.lstsq":
@@ -314,7 +316,9 @@ if menu == "numpy.linalg.lstsq":
                    минимизируя сумму квадратов отклонений между наблюдаемыми и предсказанными значениями. 
                    Это полезно в регрессионном анализе и других статистических методах.""",
                    doc="numpy.linalg.lstsq",
-                   example=example)
+                   example=example,
+                   code="numpy.linalg.lstsq(a, b, rcond=None)"
+                   )
 
 # Работа с полиномами
 if menu == "Работа с полиномами":
@@ -341,7 +345,7 @@ roots = np.roots(coef)
 
         if st.button("Запустить"):
             p, values, sum_poly, product_poly, roots = exec_and_return(code, ["p", "values", "sum_poly", "product_poly", "roots"])
-            
+
             st.write("Полином p(x):")
             st.write(p)
             st.write("#### Значения полинома p в точках x:")
@@ -356,4 +360,5 @@ roots = np.roots(coef)
     define_function("Работа с полиномами в NumPy",
                    "Работа с полиномами в NumPy осуществляется с помощью модуля :red[numpy.polynomial]",
                    doc="numpy.poly",
-                   example=example)
+                   example=example,
+                   code="numpy.poly1d(c_or_r, r=False, variable=None)\nnumpy.roots(p)")
