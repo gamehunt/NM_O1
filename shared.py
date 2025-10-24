@@ -13,7 +13,7 @@ def exec_and_return(code, ret_vals):
         raise ValueError("ret_vals должен быть строкой или списком строк")
 
 def define_function(header, description, doc = None, example = None):
-    st.header(header)
+    st.header(header, anchor = False)
     st.write(description) 
     
     if doc:

@@ -80,8 +80,8 @@ if menu == "Массив случайных чисел":
             st.write(exec_and_return(code, 'random_array'))
 
     define_function("5. Массив случайных чисел",
-                    "numpy.random.rand - функция NumPy для создания массива случайных чисел.",
-                    'numpy.random.rand',
+                    ":red[numpy.random.rand] - функция NumPy для создания массива случайных чисел.",
+                    "numpy.random.rand",
                     example)
 
 if menu == "Массив с заданным диапазоном":
@@ -92,7 +92,7 @@ if menu == "Массив с заданным диапазоном":
             st.write(exec_and_return(code, 'range_array'))
 
     define_function("6. Массив с заданным диапазоном",
-                    "numpy.arange - функция NumPy для создания массива с заданным распределением.",
+                    ":red[numpy.arange] - функция NumPy для создания массива с заданным распределением.",
                     "numpy.arange",
                     example
                     )
