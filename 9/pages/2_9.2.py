@@ -118,7 +118,7 @@ def lotka_volterra_jac(t, y):
     """
     Якобиан системы Лотка-Вольтерра
     """
-    alpha, beta, gamma, delta = 1.0, 0.1, 1.5, 0.075
+    alpha, beta, gamma, delta = 1.0, 1.0, 1.0, 1.0
     
     J = np.zeros((2, 2))
     J[0, 0] = alpha - beta * y[1]  # df0/dy0
