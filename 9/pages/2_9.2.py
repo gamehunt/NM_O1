@@ -105,7 +105,7 @@ def lotka_volterra(t, y):
     gamma - смертность хищников
     delta - рождаемость хищников
     """
-    alpha, beta, gamma, delta = 1.0, 0.1, 1.5, 0.075
+    alpha, beta, gamma, delta = 1.0, 1.0, 1.0, 1.0
     
     dydt = np.zeros(2)
     dydt[0] = alpha * y[0] - beta * y[0] * y[1]  # Уравнение для жертв
