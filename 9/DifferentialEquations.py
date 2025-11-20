@@ -13,7 +13,7 @@ with col2:
     image = Image.open('./logo.png') 
     st.image(image)
 
-st.markdown(f"<br/><br/><h1 style='text-align: center;'>Численные методы решения задач линейной алгебры</h1>", unsafe_allow_html=True)
+st.markdown(f"<br/><br/><h1 style='text-align: center;'>Численные методы решения систем дифференциальных уравнений</h1>", unsafe_allow_html=True)
 
 r"""
 \
