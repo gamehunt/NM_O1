@@ -21,21 +21,22 @@ def hilbert_matrix(n):
             H[i, j] = 1 / (i + j + 1)
     return H
 
-st.title("Разложение Холецкого и определитель матрицы Гильберта")
-
-# Создаем боковую панель для навигации - все разделы видны сразу
+# Создаем боковую панель для навигации с радиокнопками
 st.sidebar.title("Навигация")
-section = st.sidebar.radio(
+
+# Главный раздел с радиокнопками
+main_section = st.sidebar.radio(
     "Выберите раздел:",
-    ["Условные обозначения", "Постановка задачи", "Алгоритм разложения Холецкого", "Матрица Гильберта", "Реализация и сравнение"]
+    ["Разложение Холецкого и определитель матрицы Гильберта", "Основные обозначения", "Постановка задачи", "Алгоритм разложения Холецкого", "Матрица Гильберта", "Реализация и сравнение"]
 )
 
-if section == "Условные обозначения":
-    st.header("Условные обозначения")
+if main_section == "Разложение Холецкого и определитель матрицы Гильберта":
+    st.title("Разложение Холецкого и определитель матрицы Гильберта")
+    
+
+elif main_section == "Основные обозначения":
     
     st.markdown("""
-    В данном приложении используются следующие обозначения:
-    
     ### Математические обозначения:
     - **$A$** - исходная симметричная положительно определённая матрица
     - **$L$** - нижняя треугольная матрица в разложении Холецкого
@@ -55,11 +56,11 @@ if section == "Условные обозначения":
     - **`s`** - вспомогательная переменная для суммы произведений
     - **`cholesky_decomposition(A)`** - функция для вычисления разложения Холецкого
     - **`hilbert_matrix(n)`** - функция для генерации матрицы Гильберта
-    - **`np.linalg.cholesky()`** - встроенная функция NumPy для разложения Холецкого
+    - **`scipy.linalg.cholesky()`** - встроенная функция SciPy для разложения Холецкого
     - **`np.linalg.det()`** - встроенная функция NumPy для вычисления определителя
     """)
 
-elif section == "Постановка задачи":
+elif main_section == "Постановка задачи":
     st.header("Постановка задачи")
     st.markdown("""
     Необходимо написать программу, реализующую разложение Холецкого $A = LL^T$ для симметричной положительно определённой матрицы $A$ и вычисляющую определитель матрицы на основе этого разложения.
@@ -70,16 +71,15 @@ elif section == "Постановка задачи":
 
     при различных $n$.
 
-    Решите также эту задачу с помощью библиотеки Numpy.
+    Решите также эту задачу с помощью библиотеки SciPy.
     """)
 
-elif section == "Алгоритм разложения Холецкого":
-    st.header("Алгоритм разложения Холецкого")
+elif main_section == "Алгоритм разложения Холецкого":
 
     st.markdown(r"""
     ### Математические формулы разложения Холецкого
 
-    Для симметричной положительно определённой матрицы $A$ разложение $A = LL^T$ 
+    Для симметричной положительно определённой матриции $A$ разложение $A = LL^T$ 
     вычисляется по следующим формулам:
     """)
 
@@ -122,10 +122,8 @@ elif section == "Алгоритм разложения Холецкого":
     st.markdown("- **Стабильность**: не требует выбора ведущего элемента")
     st.markdown("- **Эффективность**: сложность $O(n^3/3)$ операций")
 
-elif section == "Матрица Гильберта":
-    st.header("Матрица Гильберта")
+elif main_section == "Матрица Гильберта":
     
-    st.markdown("---")
     st.subheader("Особенности матрицы Гильберта")
 
     st.markdown(r"""
@@ -166,6 +164,35 @@ def hilbert_matrix(n):
     st.subheader("Матрица Гильберта")
     st.write(H)
 
+elif main_section == "Реализация и сравнение":
+    
+    st.markdown("### Реализация разложения Холецкого на Python")
+    st.code("""
+def cholesky_decomposition(A):
+    n = A.shape[0]
+    L = np.zeros_like(A)
+    for i in range(n):
+        for j in range(i+1):
+            s = np.dot(L[i, :j], L[j, :j])
+            if i == j:
+                L[i, j] = np.sqrt(A[i, i] - s)
+            else:
+                L[i, j] = (A[i, j] - s) / L[j, j]
+    return L
+    """, language='python')
+    
+    st.markdown("### Реализация с использованием SciPy")
+    st.code("""
+# Использование встроенной функции SciPy
+L_scipy = scipy.linalg.cholesky(H, lower=True)
+det_scipy = np.linalg.det(H)
+    """, language='python')
+    
+    # Вычисление для демонстрации
+    n = st.slider("Выберите размер матрицы Гильберта n:", min_value=2, max_value=10, value=5, key="implementation_slider")
+    
+    H = hilbert_matrix(n)
+    
     # Функция для пошаговой демонстрации
     def cholesky_step_by_step(A):
         """Пошаговое выполнение разложения Холецкого с объяснениями"""
@@ -196,43 +223,12 @@ def hilbert_matrix(n):
         L_step_by_step = cholesky_step_by_step(H)
         st.write("**Итоговая матрица L:**")
         st.write(L_step_by_step)
-
-elif section == "Реализация и сравнение":
-    st.header("Реализация и сравнение")
     
-    st.subheader("Реализация разложения Холецкого")
-    
-    st.markdown("### Реализация на Python")
-    st.code("""
-def cholesky_decomposition(A):
-    n = A.shape[0]
-    L = np.zeros_like(A)
-    for i in range(n):
-        for j in range(i+1):
-            s = np.dot(L[i, :j], L[j, :j])
-            if i == j:
-                L[i, j] = np.sqrt(A[i, i] - s)
-            else:
-                L[i, j] = (A[i, j] - s) / L[j, j]
-    return L
-    """, language='python')
-    
-    st.markdown("### Реализация с использованием NumPy")
-    st.code("""
-# Использование встроенной функции NumPy
-L_numpy = np.linalg.cholesky(H)
-det_numpy = np.linalg.det(H)
-    """, language='python')
-    
-    # Вычисление для демонстрации
-    n = st.slider("Выберите размер матрицы Гильберта n:", min_value=2, max_value=10, value=5, key="implementation_slider")
-    
-    H = hilbert_matrix(n)
     L_custom = cholesky_decomposition(H)
     det_custom = np.prod(np.diag(L_custom)) ** 2
 
-    L_numpy = np.linalg.cholesky(H)
-    det_numpy = np.linalg.det(H)
+    L_scipy = scipy.linalg.cholesky(H, lower=True)
+    det_scipy = np.linalg.det(H)
     
     st.subheader("Результаты вычислений")
     
@@ -242,14 +238,35 @@ det_numpy = np.linalg.det(H)
         st.write("**Реализация на Python:**")
         st.write("Нижняя треугольная матрица L:")
         st.write(L_custom)
-        st.write(f"Определитель: {det_custom:.10e}")
+        # Форматирование определителя для лучшей читаемости
+        if abs(det_custom) < 1e-10:
+            st.write(f"Определитель: {det_custom:.20f}")
+        else:
+            st.write(f"Определитель: {det_custom:.15e}")
     
     with col2:
-        st.write("**Реализация с NumPy:**")
+        st.write("**Реализация с SciPy:**")
         st.write("Нижняя треугольная матрица L:")
-        st.write(L_numpy)
-        st.write(f"Определитель: {det_numpy:.10e}")
+        st.write(L_scipy)
+        # Форматирование определителя для лучшей читаемости
+        if abs(det_scipy) < 1e-10:
+            st.write(f"Определитель: {det_scipy:.20f}")
+        else:
+            st.write(f"Определитель: {det_scipy:.15e}")
     
     st.subheader("Сравнение результатов")
-    st.write(f"Разница между матрицами L (Реализация и NumPy): {np.max(np.abs(L_custom - L_numpy)):.10e}")
-    st.write(f"Разница между определителями: {np.abs(det_custom - det_numpy):.10e}")
+    
+    # Вычисление разниц
+    L_diff = np.max(np.abs(L_custom - L_scipy))
+    det_diff = np.abs(det_custom - det_scipy)
+    
+    # Форматирование разниц для лучшей читаемости
+    if L_diff < 1e-15:
+        st.write(f"Разница между матрицами L (Реализация и SciPy): {L_diff:.20f}")
+    else:
+        st.write(f"Разница между матрицами L (Реализация и SciPy): {L_diff:.15e}")
+    
+    if det_diff < 1e-20:
+        st.write(f"Разница между определителями: {det_diff:.25f}")
+    else:
+        st.write(f"Разница между определителями: {det_diff:.15e}")
