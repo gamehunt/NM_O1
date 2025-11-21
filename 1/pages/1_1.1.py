@@ -11,11 +11,11 @@ def create_matrix_A(n):
         for j in range(n):
             if i == j:
                 A[i, j] = 1
-            if i < j:
+            elif i < j:
                 A[i, j] = -1
-            if i > j and j != n-1:
+            elif i > j and j != n - 1:
                 A[i, j] = 0
-            if j == n - 1:
+            elif j == n - 1:
                 A[i, j] = 1
     return A
 
