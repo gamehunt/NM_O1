@@ -50,10 +50,10 @@ class OptimizationMethods:
 
     @staticmethod
     def rosenbrock_grad(x):
-        """Вычисление градиента функции f в точке x"""
+        """Вычисление антиградиента функции f в точке x"""
         df_dx1 = -40 * x[0] * (x[1] - x[0]**2) - 2 * (1 - x[0])
         df_dx2 = 20 * (x[1] - x[0]**2)
-        return [df_dx1, df_dx2]  # Градиент
+        return [-df_dx1, -df_dx2]  # Антирадиент
 
     @staticmethod
     def norm(x, x1):
@@ -249,7 +249,7 @@ def gradient_descent_golden(x0, tol=1e-6, max_iter=1000):
     point_differences_x1 = []  # Разности по координате x₁
     point_differences_x2 = []  # Разности по координате x₂
     
-    # Вычисляем начальный градиент
+    # Вычисляем начальный антиградиент
     h = grad_f(x1)
     grad_norms.append(norma(h))
     
