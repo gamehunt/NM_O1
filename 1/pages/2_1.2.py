@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.linalg
 import streamlit as st
+import matplotlib.pyplot as plt
 
 def cholesky_decomposition(A):
     n = A.shape[0]
@@ -20,6 +21,37 @@ def hilbert_matrix(n):
         for j in range(n):
             H[i, j] = 1 / (i + j + 1)
     return H
+
+def is_positive_definite(matrix):
+    """Проверка матрицы на положительную определенность"""
+    try:
+        # Пытаемся выполнить разложение Холецкого
+        np.linalg.cholesky(matrix)
+        return True
+    except np.linalg.LinAlgError:
+        return False
+
+def compute_condition_numbers(max_n):
+    """Вычисление чисел обусловленности для матриц Гильберта разных размеров"""
+    sizes = list(range(2, max_n + 1))
+    condition_numbers = []
+    
+    for n in sizes:
+        H = hilbert_matrix(n)
+        cond_number = np.linalg.cond(H)
+        condition_numbers.append(cond_number)
+    
+    return sizes, condition_numbers
+
+def compute_leading_principal_minors(matrix):
+    """Вычисление ведущих главных миноров матрицы"""
+    n = matrix.shape[0]
+    minors = []
+    for i in range(1, n + 1):
+        submatrix = matrix[:i, :i]
+        minor = np.linalg.det(submatrix)
+        minors.append(minor)
+    return minors
 
 # Создаем боковую панель для навигации с радиокнопками
 st.sidebar.title("Навигация")
@@ -46,6 +78,7 @@ elif main_section == "Основные обозначения":
     - **$a_{ij}$** - элемент матрицы $A$ в строке $i$, столбце $j$
     - **$l_{ij}$** - элемент матрицы $L$ в строке $i$, столбце $j$
     - **$\\det(A)$** - определитель матрицы $A$
+    - **$\\kappa(A)$** - число обусловленности матрицы $A$
     
     ### Обозначения в коде:
     - **`A`** - входная матрица для разложения
@@ -58,6 +91,7 @@ elif main_section == "Основные обозначения":
     - **`hilbert_matrix(n)`** - функция для генерации матрицы Гильберта
     - **`scipy.linalg.cholesky()`** - встроенная функция SciPy для разложения Холецкого
     - **`np.linalg.det()`** - встроенная функция NumPy для вычисления определителя
+    - **`np.linalg.cond()`** - функция для вычисления числа обусловленности
     """)
 
 elif main_section == "Постановка задачи":
@@ -97,7 +131,7 @@ elif main_section == "Алгоритм разложения Холецкого":
     """)
 
     st.markdown("**Шаг 1:** Инициализация")
-    st.markdown("- Создаём нулевую матрицу $L$ того же размера, что и $A$")
+    st.markdown("- Создаём нулевую матрицу $L$ того же размеры, что и $A$")
 
     st.markdown("**Шаг 2:** Вычисление элементов матрицы $L$")
     st.markdown("Для каждого $i = 0, 1, \\dots, n-1$ и $j = 0, 1, \\dots, i$:")
@@ -157,12 +191,152 @@ def hilbert_matrix(n):
     - Индексы `i` и `j` начинаются с 0, поэтому в знаменателе `i + j + 1` вместо `i + j - 1`
     """)
     
-    n = st.slider("Выберите размер матрицы Гильберта n:", min_value=2, max_value=10, value=5, key="hilbert_slider")
+    n = st.slider("Выберите размер матрицы Гильберта n:", min_value=2, max_value=20, value=5, key="hilbert_slider")
 
     H = hilbert_matrix(n)
     
     st.subheader("Матрица Гильберта")
     st.write(H)
+    
+    # Проверка на положительную определенность
+    st.subheader("Проверка на положительную определенность")
+    
+    # Проверка через собственные значения
+    st.markdown("**Проверка через собственные значения:**")
+    eigenvalues = np.linalg.eigvals(H)
+    
+    # Создаем красивый вывод для собственных значений
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**Собственные значения:**")
+        for i, val in enumerate(eigenvalues):
+            st.write(f"$\lambda_{i+1}$ = {val:.10e}")
+    
+    with col2:
+        min_eigenvalue = np.min(eigenvalues)
+        max_eigenvalue = np.max(eigenvalues)
+        all_positive = np.all(eigenvalues > 0)
+        
+        if all_positive:
+            st.write("Все собственные значения положительны")
+        else:
+            st.write("Не все собственные значения положительны")
+    
+    # Проверка по критерию Сильвестра
+    st.markdown("**Проверка по критерию Сильвестра (ведущие главные миноры):**")
+    minors = compute_leading_principal_minors(H)
+    
+    # Создаем красивый вывод для миноров
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("**Главные миноры:**")
+        for i, minor in enumerate(minors):
+            st.write(f"$\Delta_{i+1}$: {minor:.10e}")
+    
+    with col2:
+        all_minors_positive = all(minor > 0 for minor in minors)
+        if all_minors_positive:
+            st.write("Все ведущие главные миноры положительны")
+        else:
+            st.write("Не все ведущие главные миноры положительны")
+    
+    # Итоговый вывод
+    st.markdown("**Итоговый вывод:**")
+    if all_positive and all_minors_positive:
+        st.markdown("""
+        <div style="background-color: #e8f5e8; padding: 15px; border-radius: 5px; border-left: 5px solid #4CAF50;">
+        <h4 style="color: #2e7d32; margin: 0;">Матрица положительно определена</h4>
+        <p style="margin: 5px 0 0 0; color: #2e7d32;">Матрица Гильберта размером {n}×{n} является положительно определённой. 
+        Разложение Холецкого возможно.</p>
+        </div>
+        """.format(n=n), unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <div style="background-color: #ffebee; padding: 15px; border-radius: 5px; border-left: 5px solid #f44336;">
+        <h4 style="color: #c62828; margin: 0;">Матрица не положительно определена</h4>
+        <p style="margin: 5px 0 0 0; color: #c62828;">Матрица Гильберта размером {n}×{n} не является положительно определённой. 
+        Разложение Холецкого невозможно.</p>
+        </div>
+        """.format(n=n), unsafe_allow_html=True)
+    
+    # Число обусловленности
+    st.subheader("Число обусловленности")
+    cond_number = np.linalg.cond(H)
+    
+    # Создаем стилизованный вывод для числа обусловленности
+    if cond_number > 1e10:
+        st.markdown(f"""
+        <div style="background-color: #fff3e0; padding: 15px; border-radius: 5px; border-left: 5px solid #ff9800;">
+        <h4 style="color: #e65100; margin: 0;">Очень плохая обусловленность</h4>
+        <p style="margin: 5px 0 0 0; color: #e65100;">Число обусловленности: <strong>{cond_number:.10e}</strong></p>
+        <p style="margin: 5px 0 0 0; color: #e65100;">Матрица очень плохо обусловлен</p>
+        </div>
+        """, unsafe_allow_html=True)
+    elif cond_number > 1e5:
+        st.markdown(f"""
+        <div style="background-color: #fff8e1; padding: 15px; border-radius: 5px; border-left: 5px solid #ffc107;">
+        <h4 style="color: #ff8f00; margin: 0;">Плохая обусловленность</h4>
+        <p style="margin: 5px 0 0 0; color: #ff8f00;">Число обусловленности: <strong>{cond_number:.10e}</strong></p>
+        <p style="margin: 5px 0 0 0; color: #ff8f00;">Матрица плохо обусловлена</p>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown(f"""
+        <div style="background-color: #e8f5e8; padding: 15px; border-radius: 5px; border-left: 5px solid #4CAF50;">
+        <h4 style="color: #2e7d32; margin: 0;">Хорошая обусловленность</h4>
+        <p style="margin: 5px 0 0 0; color: #2e7d32;">Число обусловленности: <strong>{cond_number:.10e}</strong></p>
+        <p style="margin: 5px 0 0 0; color: #2e7d32;">Матрица хорошо обусловлена</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # График зависимости обусловленности от размера матрицы
+    st.subheader("Зависимость обусловленности от размера матрицы")
+    
+    max_n_plot = st.slider("Максимальный размер матрицы для графика:", 
+                          min_value=5, max_value=38, value=10, key="cond_slider")
+    
+    sizes, condition_numbers = compute_condition_numbers(max_n_plot)
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    # Увеличиваем отступ сверху для заголовка
+    fig.subplots_adjust(top=0.85)
+    
+    ax.semilogy(sizes, condition_numbers, 'bo-', linewidth=2, markersize=6)
+    ax.set_xlabel('Размер матрицы n')
+    ax.set_ylabel('Число обусловленности (логарифмическая шкала)')
+    
+    # Поднимаем заголовок выше с помощью параметра y
+    ax.set_title('Зависимость числа обусловленности матрицы Гильберта от размера', 
+                 pad=20, y=1.05)  # pad - отступ, y - позиция по вертикали
+    
+    ax.grid(True, alpha=0.3)
+    
+    # Устанавливаем равномерные деления на оси x
+    ax.set_xticks(sizes)
+    
+    # Добавляем аннотации для некоторых точек с смещением в сторону
+    for i, (size, cond) in enumerate(zip(sizes, condition_numbers)):
+        if i % 2 == 0 or size == max_n_plot:  # Аннотируем каждую вторую точку и последнюю
+            # Чередуем смещение вверх и вниз для разных точек
+            offset_y = 15 if i % 4 == 0 else -25
+            ax.annotate(f'{cond:.1e}', (size, cond), 
+                       textcoords="offset points", 
+                       xytext=(0, offset_y), 
+                       ha='center', 
+                       fontsize=8,
+                       bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8),
+                       arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=0"))
+    
+    st.pyplot(fig)
+    
+    st.markdown("""
+    **Замечания:**
+    - Число обусловленности матрицы Гильберта растет экспоненциально с увеличением размера
+    - При $n = 8$ матрица становится очень плохо обусловленной
+    - Это объясняет трудности при численных вычислениях с матрицами Гильберта больших размеров
+    """)
+
 
 elif main_section == "Реализация и сравнение":
     
