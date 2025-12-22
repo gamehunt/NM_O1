@@ -224,5 +224,3 @@ def solve_with_scipy(f, t_span, y0, t_eval):
     st.pyplot(fig)
 
     st.metric("Время выполнения", f"{computation_time:.6f} сек")
-elif selected_section == "Сравнение методов":
-    pass
