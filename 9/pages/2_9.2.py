@@ -312,6 +312,8 @@ def own_solve(f, f_jac, t_span, y0, t_eval=None, theta = 0.5, n_steps=1000):
     return t, y
     ''', language='python')
 
+    theta = st.slider('Theta', min_value=0.0, max_value=1.0, value=0.5)
+
     start_time = time.perf_counter()
     t, y = own_solve(lotka_volterra, lotka_volterra_jac, rng, y0, t_eval)
     computation_time = time.perf_counter() - start_time
