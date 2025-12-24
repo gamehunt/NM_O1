@@ -76,7 +76,7 @@ with st.sidebar:
         "Теория",
         "Собственная реализация",
         "Решение через SciPy",
-        # "Сравнение методов"
+        "Сравнение методов"
     ]
     selected_section = st.radio("Перейти к разделу:", sections)
 
@@ -84,7 +84,12 @@ if selected_section == "Постановка задачи":
     st.header("Постановка задачи")
 
     st.markdown(r"""
-    Рассматривается задача Коши:
+    Напишите программу для численного решения задачи Коши для
+    системы обыкновенных дифференциальных уравнений
+    явным методом Рунге-Кутта четвертого порядка.
+
+    Продемонстрируйте работоспособность этой программы
+    при решении задачи Коши
 
     $\begin{aligned}
      \frac{d^2 u }{dt^2} = - \sin(u),
@@ -96,19 +101,7 @@ if selected_section == "Постановка задачи":
      \quad \frac{d u}{dt} (0) = 0.
      \end{aligned}$
 
-    Которая сводится к системе:
-
-    $\begin{aligned}
-        \frac{du}{dt} = v , 
-        \quad \frac{dv}{dt} = -sin(u)
-    \end{aligned}$
-
-    $\begin{aligned}
-      u(0) = 1,
-     \quad v(0) = 0.
-     \end{aligned}$
-
-    Необходимо численно решить эту систему явным методом Рунге-Кутты 4 порядка
+    Решите также эту задачу с помощью библиотеки SciPy.
     """)
 elif selected_section == "Теория":
     st.subheader("Теория")
@@ -190,7 +183,7 @@ def own_solve(f, rng, y0, h):
     fig, ax = plt.subplots()
     plt.title('График решения')
     ax.plot(t, y[:, 0], label = 'u(t)')
-    ax.plot(t, y[:, 1], label = 'v(t)')
+    # ax.plot(t, y[:, 1], label = 'v(t)')
     ax.legend()
     ax.grid()
     st.pyplot(fig)
@@ -218,9 +211,63 @@ def solve_with_scipy(f, t_span, y0, t_eval):
     fig, ax = plt.subplots()
     plt.title('График решения')
     ax.plot(t, y[:, 0], label = 'u(t)')
-    ax.plot(t, y[:, 1], label = 'v(t)')
+    # ax.plot(t, y[:, 1], label = 'v(t)')
     ax.legend()
     ax.grid()
     st.pyplot(fig)
 
     st.metric("Время выполнения", f"{computation_time:.6f} сек")
+
+elif selected_section == "Сравнение методов":
+    st.header("Сравнение собственной реализации и SciPy")
+
+    # --- Собственная реализация ---
+    start_time = time.perf_counter()
+    t_own, y_own = own_solve(pendulum_system, rng, y0, 1e-2)
+    time_own = time.perf_counter() - start_time
+
+    # Интерполяция собственного решения к общей сетке
+    y_own_interp = np.zeros((len(t_eval), 2))
+    y_own_interp[:, 0] = np.interp(t_eval, t_own, y_own[:, 0])
+    y_own_interp[:, 1] = np.interp(t_eval, t_own, y_own[:, 1])
+
+    # --- SciPy ---
+    start_time = time.perf_counter()
+    t_sci, y_sci = solve_with_scipy(
+        pendulum_system, rng, y0, t_eval
+    )
+    time_sci = time.perf_counter() - start_time
+
+    # --- Оценка погрешности ---
+    diff = np.abs(y_own_interp - y_sci)
+    max_diff_u = np.max(diff[:, 0])
+    max_diff_v = np.max(diff[:, 1])
+
+    # --- Вывод метрик ---
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("Время RK4 (собств.)", f"{time_own:.6f} сек")
+        st.metric("Макс. разница u(t)", f"{max_diff_u:.2e}")
+    with col2:
+        st.metric("Время SciPy RK45", f"{time_sci:.6f} сек")
+    #     st.metric("Макс. разница v(t)", f"{max_diff_v:.2e}")
+
+    fig_u, ax_u = plt.subplots()
+    ax_u.plot(t_eval, y_sci[:, 0], label="SciPy", linewidth=2)
+    ax_u.plot(t_eval, y_own_interp[:, 0], "--", label="Собств.")
+    ax_u.set_title("Сравнение решений")
+    ax_u.set_xlabel("t")
+    ax_u.set_ylabel("u")
+    ax_u.grid()
+    ax_u.legend()
+    st.pyplot(fig_u)
+
+    # fig_v, ax_v = plt.subplots()
+    # ax_v.plot(t_eval, y_sci[:, 1], label="SciPy", linewidth=2)
+    # ax_v.plot(t_eval, y_own_interp[:, 1], "--", label="Собств.")
+    # ax_v.set_title("Сравнение решений v(t)")
+    # ax_v.set_xlabel("t")
+    # ax_v.set_ylabel("v")
+    # ax_v.grid()
+    # ax_v.legend()
+    # st.pyplot(fig_v)

@@ -135,7 +135,7 @@ def solve_with_scipy(f, t_span, y0, t_eval):
     """
     Решение с помощью SciPy
     """
-    sol = solve_ivp(f, t_span, y0, t_eval=t_eval, method='RK45', rtol=1e-8)
+    sol = solve_ivp(f, t_span, y0, t_eval=t_eval, method='RK23', rtol=1e-8)
     return sol.t, sol.y.T
 
 rng = [0, 10]
@@ -154,7 +154,7 @@ with st.sidebar:
         "Теория",
         "Собственная реализация",
         "Решение через SciPy",
-        # "Сравнение методов"
+        "Сравнение методов"
     ]
     selected_section = st.radio("Перейти к разделу:", sections)
 
@@ -162,7 +162,12 @@ if selected_section == "Постановка задачи":
     st.header("Постановка задачи")
 
     st.markdown(r"""
-Рассматривается задача Коши (Модель Лотка-Вольтерра):
+Напишите программу для численного решения задачи Коши для
+системы обыкновенных дифференциальных уравнений
+с использованием двухслойной схемы с весом при решении
+системы нелинейных уравнений на новом временном слое методом Ньютона.
+Используйте эту программу для решения задачи Коши
+(модель Лотка-Вольтерра)
 
 $\begin{aligned}
   \frac{d y_1}{dt} = y_1 - y_1 y_2,
@@ -175,8 +180,7 @@ $\begin{aligned}
   \quad y_2(0) = 2 .
 \end{aligned}$
 
-Необходимо численно решить эту систему с использованием двухслойной схемы с весом при решении
-системы нелинейных уравнений на новом временном слое методом Ньютона.
+Решите также эту задачу с помощью библиотеки SciPy.
     """)
 elif selected_section == "Теория":
     st.subheader("Теория")
@@ -338,9 +342,9 @@ def solve_with_scipy(f, t_span, y0, t_eval):
     """
     Решение с помощью SciPy
     """
-    sol = solve_ivp(f, t_span, y0, t_eval=t_eval, method='RK45', rtol=1e-8)
+    sol = solve_ivp(f, t_span, y0, t_eval=t_eval, method='RK23', rtol=1e-8)
     return sol.t, sol.y.T
-            ''', language = 'python')
+''', language = 'python')
 
     start_time = time.perf_counter()
     t, y = solve_with_scipy(lotka_volterra, rng, y0, t_eval)
@@ -355,3 +359,68 @@ def solve_with_scipy(f, t_span, y0, t_eval):
     st.pyplot(fig)
 
     st.metric("Время выполнения", f"{computation_time:.6f} сек")
+
+elif selected_section == "Сравнение методов":
+    st.header("Сравнение методов")
+
+    theta = st.slider("Theta", 0.0, 1.0, 0.5)
+
+    # --- Собственный метод ---
+    start_time = time.perf_counter()
+    t_own, y_own = own_solve(
+        lotka_volterra,
+        lotka_volterra_jac,
+        rng,
+        y0,
+        t_eval=t_eval,
+        theta=theta
+    )
+    time_own = time.perf_counter() - start_time
+
+    # --- SciPy ---
+    start_time = time.perf_counter()
+    t_sci, y_sci = solve_with_scipy(
+        lotka_volterra,
+        rng,
+        y0,
+        t_eval
+    )
+    time_sci = time.perf_counter() - start_time
+
+    # --- Максимальная разница ---
+    diff = np.abs(y_own - y_sci)
+    max_diff_y1 = np.max(diff[:, 0])
+    max_diff_y2 = np.max(diff[:, 1])
+
+    # --- Метрики ---
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.metric("Время собственной реализации", f"{time_own:.6f} сек")
+        st.metric("Макс. разница y1", f"{max_diff_y1:.2e}")
+
+    with col2:
+        st.metric("Время SciPy RK23", f"{time_sci:.6f} сек")
+        st.metric("Макс. разница y2", f"{max_diff_y2:.2e}")
+
+    # --- График y1(t) ---
+    fig1, ax1 = plt.subplots()
+    ax1.plot(t_sci, y_sci[:, 0], label="y₁(t) — SciPy", linewidth=2)
+    ax1.plot(t_own, y_own[:, 0], "--", label="y₁(t) — θ-схема")
+    ax1.set_title("Сравнение решений y₁(t)")
+    ax1.set_xlabel("t")
+    ax1.set_ylabel("y₁")
+    ax1.grid()
+    ax1.legend()
+    st.pyplot(fig1)
+
+    # --- График y2(t) ---
+    fig2, ax2 = plt.subplots()
+    ax2.plot(t_sci, y_sci[:, 1], label="y₂(t) — SciPy", linewidth=2)
+    ax2.plot(t_own, y_own[:, 1], "--", label="y₂(t) — θ-схема")
+    ax2.set_title("Сравнение решений y₂(t)")
+    ax2.set_xlabel("t")
+    ax2.set_ylabel("y₂")
+    ax2.grid()
+    ax2.legend()
+    st.pyplot(fig2)
